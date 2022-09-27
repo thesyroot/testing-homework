@@ -1,0 +1,66 @@
+body {
+  background-color: #212529;
+}
+
+.table-wrapper {
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.table-row {
+  height: 80%;
+}
+
+/* circles */
+
+.circle-red{
+  background-color: #E31C0B;
+
+  height: 18px;
+  width: 16px;
+  border-radius: 50%;
+
+  border: 1px solid white;
+}
+.circle-orange{
+  background-color: #FD720D;
+
+  height: 18px;
+  width: 16px;
+  border-radius: 50%;
+
+  border: 1px solid white;
+}
+.circle-blue{
+  background-color: #620BE3;
+
+  height: 18px;
+  width: 16px;
+  border-radius: 50%;
+
+  border: 1px solid white;
+}
+.circle-green{
+  background-color: #0be35e;
+
+  height: 18px;
+  width: 16px;
+  border-radius: 50%;
+
+  border: 1px solid white;
+}
+
+/* modal */
+
+input {
+  font-size: 14px !important;
+}
+
+.modal-content {
+  background-color: #212529 !important;
+}
+
+#inputDescArea {
+  height: 10em;
+  text-align: left;
+}

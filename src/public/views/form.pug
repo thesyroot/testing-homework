@@ -1,0 +1,100 @@
+html 
+  head
+    title Formulario de turno
+
+    // CSS only
+    link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous")
+    
+    link(href="style/form.css" rel="stylesheet")
+    link(href="style/input-time-styled.css" rel="stylesheet")
+  
+  body
+    .container-fluid.ps-5.pe-5.mt-5.pt-3
+      form(action="/crtEvent" method="POST")
+        input#id(type='hidden' name='modify' value=modify)
+
+        .row
+          .col-2
+            .mb-3.form-floating
+              if modify != '-1'
+                input#inputName.form-control(type='text' name="inputName" placeholder="name" value=prevdata.cteName)
+              else 
+                input#inputName.form-control(type='text' name="inputName" placeholder="name")
+              label(for='inputName') Nombre
+          .col-2
+            .mb-3.ms-1.form-floating
+              if modify != '-1'
+                input#inputLName.form-control(type='text' name="inputLName" placeholder="lastname" value=prevdata.cteApellido)
+              else 
+                input#inputLName.form-control(type='text' name="inputLName" placeholder="lastname")
+              label(for='inputLName') Apellido
+
+        .row
+          .col-3
+            .mb-3.form-floating
+              select#inputTService.form-control(placeholder="typeservice" name="inputTService")
+                each services in typeservices
+                  if services.ID == 1
+                    option(value=services.ID selected)= services.NameService
+                  else
+                    option(value=services.ID)= services.NameService
+
+              label(for='inputTService') Servicio Odontologico
+
+        .row
+          .col-2
+            .mb-3.form-floating
+              select#inputMutual.form-control(placeholder="Mutual" name="inputMutual")
+                each mutual in mutuales
+                  if mutual.ID == 1
+                    option(value=mutual.ID selected)= mutual.Name
+                  else
+                    option(value=mutual.ID)= mutual.Name
+                    
+              label(for='inputMutual') Mutual
+          .col-2
+            .mb-3.ms-1.form-floating
+              input#inputDesc.form-control(type='number' placeholder="descuento" name="inputDesc")
+              label(for='inputDesc') Descuento
+
+        .row
+          .col-3
+            .mb-3.form-floating
+              if modify != '-1'
+                input#inputID.form-control(type='password' placeholder="UID" name="inputID" value=prevdata.IDTrabajador)
+              else 
+                input#inputID.form-control(type='password' placeholder="UID" name="inputID")
+              label(for='inputID') Id del Personal
+
+        .row.mb-3
+          if modify != '-1'
+            .col-auto.me-3
+              input(type="time" value=prevdata.tmTurno[1] name="inputTime")
+            .col-auto
+              input(type="date" value=prevdata.tmTurno[0] name="inputDate")
+          else 
+            .col-auto.me-3
+              input(type="time" value="13:30" name="inputTime")
+            .col-auto
+              input(type="date" value="2022-06-22" name="inputDate")
+          
+
+        .row
+          .col-7
+            .mb-3.form-floating
+              if modify != '-1'
+                textarea#inputDescArea.form-control(placeholder="descArea" name="inpinputDescAreautID"  value=prevdata.Description)
+              else 
+                textarea#inputDescArea.form-control(placeholder="descArea" name="inpinputDescAreautID")
+              
+              label(for='inpinputDescAreautID') Description
+          .col-3.align-self-end
+            .mb-5.ms-4 
+              .form-text Importe sin descuento: $ 
+              .form-text Importe con descuento: $ 
+
+        .row.justify-content-end
+          .col-auto
+            a.btn.btn-primary.pe-4.me-5(href='/') Cancel
+          .col-auto
+            button.btn.btn-primary.pe-4.me-5(type='submit') Agregar

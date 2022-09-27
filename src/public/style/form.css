@@ -1,0 +1,19 @@
+body {
+  background-color: #212529;
+}
+
+.form-text {
+  color: rgb(189, 189, 189);
+
+  font-size: 16px;
+}
+
+#inputDescArea {
+  height: 20em;
+
+  text-align:left;
+}
+
+input {
+  font-size: 14px !important;
+}

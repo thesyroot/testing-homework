@@ -1,0 +1,165 @@
+html 
+  head
+    title Agenda
+
+    // CSS only
+    link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    link(href="style/index.css" rel="stylesheet")
+    link(href="style/input-time-styled.css" rel="stylesheet")
+    link(href="style/contex-menu.css" rel="stylesheet")
+  
+  body
+    #context-menu
+      #postTurn.item(data-bs-toggle="modal" data-bs-target="#exampleModal") Posponer
+      #modTurn.item Modificar turno
+      #canTurn.item Cancelar turno
+      #succTurn.item Cumplimineto de turno
+
+    #exampleModal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true')
+      .modal-dialog.modal-lg(role='document')
+        .modal-content
+          .modal-body
+            .container-fluid
+              form(action="/posEvent" method="POST")
+                .row.mb-3
+                  .col-auto.me-3
+                    input#inTime(type="time" value="13:30" name="inputTime")
+                  .col-auto
+                    input#inDate(type="date" value="2022-06-22" name="inputDate")
+                  
+                  input#inid(type='hidden' name='id')
+
+                .row.justify-content-between
+                  .col-7
+                    .form-floating
+                      textarea#inputDescArea.form-control(placeholder="descArea" name="inputDesc")
+                      label(for='inpinputDescAreautID') Description
+                  .col-auto.align-self-end
+                    a.btn.btn-primary.pe-4(data-bs-dismiss='modal') Cancel
+                  .col-auto.align-self-end
+                    button.btn.btn-primary.pe-4(type='submit' data-bs-dismiss='modal') Agregar
+
+    .container-fluid.ms-0.me-0
+      .row.ms-3.mt-5
+        .col-2.align-self-start
+          a.btn.btn-primary.pe-4(href="/form") AGREGAR
+      .row.ms-5.mt-5.table-row
+        .col-11
+          .table-responsive.table-wrapper
+            table.table.table-striped-columns.table-dark.table-hover
+              thead
+                tr.table-light 
+                  td(scope='col') #
+                  td(scope='col') Nombre del cliente
+                  td(scope='col') Fecha-Hora
+                  td(scope='col') Serivicio
+                  td(scope='col') Date
+                  td(scope='col') O
+
+              tbody
+                each turno in list
+                  tr
+                    td(scope='row')= turno.ID
+                    td= turno.cteName
+                    td= turno.tmTurno
+                    td= turno.NameService
+                    td= turno.tmCreated
+                    td
+                      if turno.IDState == 2
+                        .circle-red
+                      else if turno.IDState == 4
+                        .circle-orange
+                      else if turno.IDState == 3
+                        .circle-blue
+                      else
+                        .circle-green
+
+    script(src='https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js' integrity='sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3' crossorigin='anonymous')
+    script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js' integrity='sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz' crossorigin='anonymous')
+    script.
+      const scope = document.querySelector("body");
+      const contextMenu = document.getElementById("context-menu");
+      const table = document.querySelector("table");
+
+      const postTurn = document.getElementById("postTurn");
+      const modTurn = document.getElementById("modTurn");
+      const canTurn = document.getElementById("canTurn");
+      const succTurn = document.getElementById("succTurn");
+
+      const normalizePozition = (mouseX, mouseY) => {
+        // ? compute what is the mouse position relative to the container element (scope)
+
+        let {
+          left: scopeOffsetX,
+          top: scopeOffsetY,
+          } = scope.getBoundingClientRect();
+
+        scopeOffsetX = scopeOffsetX < 0 ? 0 : scopeOffsetX;
+        scopeOffsetY = scopeOffsetY < 0 ? 0 : scopeOffsetY;
+        const scopeX = mouseX - scopeOffsetX;
+        const scopeY = mouseY - scopeOffsetY;
+        // ? check if the element will go out of bounds
+
+        const outOfBoundsOnX =
+          scopeX + contextMenu.clientWidth > scope.clientWidth;
+        const outOfBoundsOnY =
+          scopeY + contextMenu.clientHeight > scope.clientHeight;
+        let normalizedX = mouseX;
+        let normalizedY = mouseY;
+
+        // ? normalize on X
+        if (outOfBoundsOnX) {
+          normalizedX =
+          scopeOffsetX + scope.clientWidth - contextMenu.clientWidth;
+        }
+
+        // ? normalize on Y
+        if (outOfBoundsOnY) {
+          normalizedY =
+          scopeOffsetY + scope.clientHeight - contextMenu.clientHeight;
+        }
+        
+        return { normalizedX, normalizedY };
+      };
+
+      document.querySelector("table tbody").addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        var tr = e.target;
+
+        while (tr !== this && !tr.matches("tr")) { tr = tr.parentNode; }
+
+        if (tr !== this) {
+          postTurn.addEventListener("click", (_) => {
+            const id = document.getElementById("inid");
+
+            id.defaultValue = tr.children[0].innerHTML;
+          });
+
+          succTurn.addEventListener("click", (_) => {
+            fetch("/succEvent", {method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({id: tr.children[0].innerHTML}) });
+            location.reload();
+            });
+          canTurn.addEventListener("click", (_) => {
+            fetch("/canEvent", {method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({id: tr.children[0].innerHTML}) });
+            location.reload();
+            });
+          modTurn.addEventListener("click", (_) => window.location.replace("/form?new=false&id=" + tr.children[0].innerHTML) );
+
+          const { clientX: mouseX, clientY: mouseY } = e;
+          const { normalizedX, normalizedY } = normalizePozition(mouseX, mouseY);
+
+          contextMenu.classList.remove("visible");
+          contextMenu.style.top = `${normalizedY}px`;
+          contextMenu.style.left = `${normalizedX}px`;
+
+          setTimeout(() => {
+            contextMenu.classList.add("visible");
+          });
+        }
+      });
+
+      scope.addEventListener("click", (e) => { if(e.target.offsetParent != contextMenu) contextMenu.classList.remove("visible"); });
+
+      contextMenu.addEventListener("click", (_) => contextMenu.classList.remove("visible") );
+      scope.addEventListener("contextmenu", (_) => contextMenu.classList.remove("visible") );
