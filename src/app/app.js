@@ -131,7 +131,7 @@ app.post('/crtEvent', async (req, res) => {
 
     await knex('TurnosRecordTime')
       .insert({
-        IDTurno: id,
+        IDTurno: id[0].ID,
         tmTurno: new Date(`${req.body.inputDate}T${req.body.inputTime}:00`),
         IDState: 1,
         Description: ''
