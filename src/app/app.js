@@ -27,9 +27,22 @@ app.use(upload.array());
 app.use(express.static('./src/public'));
 
 app.get('/', async (_, res) => {
-  let list =  await knex('Turno').select('Turno.ID', 'Turno.cteName', 'TurnosRecordTime.tmTurno', 'TipoServicio.NameService', 'Turno.tmCreated', 'Turno.IDState')
-    .innerJoin('TipoServicio', 'Turno.IDServicio', 'TipoServicio.ID').innerJoin('TurnosRecordTime', 'Turno.ID', 'TurnosRecordTime.IDTurno')
-    .whereNot('TurnosRecordTime.IDState', '2');
+  let list;
+
+  try {
+    list =  await knex('Turno').select('Turno.ID', 'Turno.cteName', 'TurnosRecordTime.tmTurno', 'TipoServicio.NameService', 'Turno.tmCreated', 'Turno.IDState')
+      .innerJoin('TipoServicio', 'Turno.IDServicio', 'TipoServicio.ID').innerJoin('TurnosRecordTime', 'Turno.ID', 'TurnosRecordTime.IDTurno')
+      .whereNot('TurnosRecordTime.IDState', '2');
+  } catch (error) {
+    list = [{
+      'ID': 1,
+      'cteName': 'Raul',
+      'tmTurno': new Date(),
+      'NameService': 'Revision rutinaria',
+      'tmCreated': new Date(),
+      'IDState': 1
+    }];
+  }
 
   res.render('index', { list });
 })
