@@ -49,8 +49,25 @@ app.get('/', async (_, res) => {
 
 app.get('/form', async (req, res) => {
   // aca debo pasar mutual y tipo de servicio
-  let listmutual =  await knex('ObraSocial').select('ID', 'Name', 'DescDefault')
-  let listservice =  await knex('TipoServicio').select('ID', 'NameService', 'Importe')
+  let listmutual, listservice;
+  try {
+    listservice =  await knex('TipoServicio').select('ID', 'NameService', 'Importe');
+  } catch (error) {
+    listservice = [{
+      'ID': 0,
+      'NameService': 'Revision rutinaria',
+      'Importe': 300
+    }];
+  }
+  try {
+    listmutual =  await knex('ObraSocial').select('ID', 'Name', 'DescDefault');
+  } catch (error) {
+    listmutual = [{
+      'ID': 0,
+      'Name': 'DSAUTEN',
+      'DescDefault': 10
+    }];
+  }
 
   // si tiene ciertas cosas pasarlas como una modificacion con los otros valores, aca ya toco eso
   if(req.query.new = 'false' && req.query.id != undefined && req.query.id > 0){
